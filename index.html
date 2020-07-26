@@ -1,35 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>React Sports Game</title>
+    <link rel="stylesheet" href="./style.css">
 </head>
+
 <body>
-    
+
+
     <div id="root"></div>
 
-    
+
     <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
-     <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
- 
-<script type="text/babel">
+    <script type="text/babel">
+        function App(props) {
+            return (
+                <div>
+                    <Game venue= 'Bridgman High School'
+                        team1= "Bridgman Bees"
+                        team2= "Maple Grove Crimson" />
+                </div>
+            )
+        }
 
-function App (props) {
-  return (
-    <div>
-   
-    </div>
-  )
-}
+        function Game(props) {
+            let venue = props.venue
 
-ReactDOM.render(
-  <App />,
-  document.getElementById('root')
-)
-</script>
+            return (
+                <div className='game'>
+                    <h1>Welcome to {venue}</h1>
+                    <div className='teaminfo'>
+                        <Team name={props.team1 || 'Home'} logo='https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcT2l293ds45CtdqqTTZ-pu0CWDvshTaw-458Q&usqp=CAU' />
+                        <Team name={props.team2 || 'Visitors'} logo='https://s3-us-west-2.amazonaws.com/sportshub2-uploads-prod/files/sites/590/2018/02/16183547/logo_outline-17.png' />
+                    </div>
+                </div>)
+        }
+
+        class Team extends React.Component {
+            constructor(props) {
+                super(props)
+
+
+                this.state = {
+                    name: this.props.name,
+                    logo: this.props.logo,
+                    shots: 0,
+                    score: 0,
+                    shotPercentage: 0
+                }
+            }
+
+            shoot = (event) => {
+                let shotAudio = new Audio('https://www.myinstants.com/media/sounds/211690_sounddogs__ne.mp3')
+                let madeAudio = new Audio('')
+                if (Math.random() > .5) {
+                    this.setState((state, props) => (
+                        { score: state.score + 1 }
+                    ))
+                }
+                shotAudio.play()
+                this.setState((state, props) => (
+                    { shots: state.shots + 1 }
+                ))
+                return this.setState((state, props) => (
+                    { shotPercentage: Number(state.score / state.shots) * 100 || 0 }
+                ))
+            }
+
+            render() {
+                let className = 'hide'
+                if (this.state.shots != 0) {
+                    className = 'show'
+                }
+
+                return (
+                    <div className='team'>
+                        <h1>{this.state.name} </h1>
+                        <img src={this.state.logo} alt="team-logo" />
+                        <h3> Score: <span className='score'>{this.state.score} </span> Shots: <span className='shots'>{this.state.shots} </span> </h3>
+                        <h3 className={className}>Shot Percentage: <span className='shotpercent'>{this.state.shotPercentage}%</span></h3>
+                        <button className='shootButton' onClick={this.shoot} >Shoot</button>
+                    </div>
+                )
+            }
+        }
+
+
+
+        ReactDOM.render(
+            <App />,
+            document.getElementById('root')
+        )
+
+    </script>
 </body>
+
 </html>
